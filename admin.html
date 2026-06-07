@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Cadastro de Vídeo</title>
+    <link rel="stylesheet" href="public/css/admin.css">
+    <script src="./public/js/admin.js" defer></script>
+</head>
+<body>
+
+    <header class="topbar">
+        <h1>FECAF FLIX - Painel Admin</h1>
+        <button id="logoutBtn" class="logout">Sair</button>
+    </header>
+
+    <main class="container">
+
+        <h2>Cadastrar Novo Vídeo</h2>
+
+        <form id="formVideo" enctype="multipart/form-data">
+
+            <div class="input-group">
+                <label for="nome_filme">Nome do Filme</label>
+                <input type="text" id="nome_filme" name="nome_filme" required>
+            </div>
+
+            <div class="input-group">
+                <label for="sinopse">Sinopse</label>
+                <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="genero">Gênero</label>
+                <select id="genero" name="genero" required></select>
+            </div>
+
+            <div class="input-group">
+                <label for="capa">Capa do Filme</label>
+                <input type="file" id="capa" name="capa" accept="image/*" required>
+                <img id="previewCapa" class="preview" alt="">
+            </div>
+
+            <div class="input-group">
+                <label for="video">Arquivo de Vídeo</label>
+                <input type="file" id="video" name="video" accept="video/mp4" required>
+                <video id="previewVideo" class="preview" controls></video>
+            </div>
+
+            <button type="submit" class="btn">Cadastrar Vídeo</button>
+
+            <p id="mensagem" class="mensagem"></p>
+        </form>
+
+    </main>
+
+    
+</body>
+</html>
