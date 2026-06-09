@@ -8,7 +8,7 @@ form.addEventListener('submit', async (e) => {
     const senha = document.getElementById('senha').value;
 
     try {
-        const response = await fetch('http://152.70.16.187:8080/v1/fecaf-flix/admin/login', {
+        const response = await fetch('https://waterproof-alignment-further-ace.trycloudflare.com/v1/fecaf-flix/admin/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, senha })
