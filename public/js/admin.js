@@ -15,7 +15,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 // Carregar gêneros no select
 async function carregarGeneros() {
     try {
-        const response = await fetch("http://SEU-IP:8080/v1/fecaf-flix/generos", {
+        const response = await fetch("https://waterproof-alignment-further-ace.trycloudflare.com/v1/fecaf-flix/generos", {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
@@ -70,7 +70,7 @@ document.getElementById('formVideo').addEventListener('submit', async (e) => {
     formData.append("video", document.getElementById('video').files[0]);
 
     try {
-        const response = await fetch("http://152.70.16.187:8080/v1/fecaf-flix/videos/filme", {
+        const response = await fetch("https://waterproof-alignment-further-ace.trycloudflare.com/v1/fecaf-flix/video/filme", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`
