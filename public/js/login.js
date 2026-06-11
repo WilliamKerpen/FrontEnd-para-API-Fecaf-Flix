@@ -30,30 +30,53 @@ formLogin.addEventListener('submit', async (event) => {
   }
 });
 
-btnCadastrar.addEventListener('click', async () => {
-    const email = prompt('Digite seu E-Mail');
-  const nome = prompt('Digite seu nome:');
-  const sobrenome = prompt('Digite seu nome:');
-  const data_nascimento = ('Digite sua Data de Nascimento')
-  const senha = prompt('Digite sua senha:');
-  
-  
+const btnCadastrar = document.getElementById('btnCadastrar');
+const cadastroContainer = document.getElementById('cadastroContainer');
+const formCadastro = document.getElementById('formCadastro');
+const mensagem = document.getElementById('mensagem');
 
-  if (!nome || !senha || !email || !data_nascimento || !sobrenome) return;
+// Abre o formulário
+btnCadastrar.addEventListener('click', () => {
+    cadastroContainer.style.display = 'block';
+});
 
-  try {
-    const response = await fetch('https://api.fecaf-flix-api.xyz/v1/fecaf-flix/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, senha, email, sobrenome, data_nascimento })
-    });
+// Envia os dados
+formCadastro.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    if (response.ok) {
-      alert('Usuário cadastrado com sucesso!');
-    } else {
-      alert('Erro ao cadastrar usuário.');
+    const email = document.getElementById('email').value;
+    const nome = document.getElementById('nome').value;
+    const sobrenome = document.getElementById('sobrenome').value;
+    const data_nascimento = document.getElementById('dataNascimento').value;
+    const senha = document.getElementById('senha').value;
+
+    try {
+        const response = await fetch(
+            'https://api.fecaf-flix-api.xyz/v1/fecaf-flix/user',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome,
+                    senha,
+                    email,
+                    sobrenome,
+                    data_nascimento
+                })
+            }
+        );
+
+        if (response.ok) {
+            alert('Usuário cadastrado com sucesso!');
+            formCadastro.reset();
+            cadastroContainer.style.display = 'none';
+        } else {
+            mensagem.textContent = 'Erro ao cadastrar usuário.';
+        }
+    } catch (error) {
+        console.error(error);
+        mensagem.textContent = 'Erro ao conectar com a API.';
     }
-  } catch (error) {
-    console.error(error);
-  }
 });

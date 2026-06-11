@@ -7,53 +7,87 @@
     <link rel="stylesheet" href="public/css/admin.css">
     <script src="./public/js/admin.js" defer></script>
 </head>
+
 <body>
 
-    <header class="topbar">
-        <h1>FECAF FLIX - Painel Admin</h1>
+    <aside class="sidebar">
+        <h2>FECAF FLIX</h2>
+
+        <nav>
+            <button class="menu-btn" data-modal="modalAddVideo">➕ Adicionar Vídeo</button>
+            <button class="menu-btn" data-modal="modalUsers">👥 Lista de Usuários</button>
+            <button class="menu-btn" data-modal="modalAddAdmin">⭐ Criar Admin</button>
+            <button class="menu-btn" data-modal="modalFilmes">🎬 Lista de Filmes</button>
+            <button class="menu-btn" data-modal="modalGenero">🏷 Adicionar Gênero</button>
+        </nav>
+
         <button id="logoutBtn" class="logout">Sair</button>
-    </header>
+    </aside>
 
-    <main class="container">
-
-        <h2>Cadastrar Novo Vídeo</h2>
-
-        <form id="formVideo" enctype="multipart/form-data">
-
-            <div class="input-group">
-                <label for="nome_filme">Nome do Filme</label>
-                <input type="text" id="nome_filme" name="nome_filme" required>
-            </div>
-
-            <div class="input-group">
-                <label for="sinopse">Sinopse</label>
-                <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
-            </div>
-
-            <div class="input-group">
-                <label for="genero">Gênero</label>
-                <select id="genero" name="genero" required></select>
-            </div>
-
-            <div class="input-group">
-                <label for="capa">Capa do Filme</label>
-                <input type="file" id="capa" name="capa" accept="image/*" required>
-                <img id="previewCapa" class="preview" alt="">
-            </div>
-
-            <div class="input-group">
-                <label for="video">Arquivo de Vídeo</label>
-                <input type="file" id="video" name="video" accept="video/mp4" required>
-                <video id="previewVideo" class="preview" controls></video>
-            </div>
-
-            <button type="submit" class="btn">Cadastrar Vídeo</button>
-
-            <p id="mensagem" class="mensagem"></p>
-        </form>
-
+    <main class="content">
+        <h1>Painel Administrativo</h1>
+        <p>Selecione uma opção no menu ao lado.</p>
     </main>
+
+    <!-- MODAL: Adicionar Vídeo -->
+    <div class="modal" id="modalAddVideo">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Cadastrar Novo Vídeo</h2>
+
+            <!-- Aqui entra seu formulário atual -->
+            <form id="formVideo" enctype="multipart/form-data">
+                <!-- ... seu formulário atual ... -->
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Lista de Usuários -->
+    <div class="modal" id="modalUsers">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Lista de Usuários</h2>
+            <div id="listaUsuarios"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Criar Admin -->
+    <div class="modal" id="modalAddAdmin">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Criar Novo Admin</h2>
+            <form id="formAdmin">
+                <input type="text" placeholder="Nome" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Senha" required>
+                <button type="submit">Criar Admin</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Lista de Filmes -->
+    <div class="modal" id="modalFilmes">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Lista de Filmes</h2>
+            <div id="listaFilmes"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Adicionar Gênero -->
+    <div class="modal" id="modalGenero">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Adicionar Gênero</h2>
+            <form id="formGenero">
+                <input type="text" placeholder="Nome do gênero" required>
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
+    </div>
 
     
 </body>
+
+
 </html>
