@@ -49,12 +49,13 @@ function renderizarPorGenero(filmes) {
   });
 }
 
-searchInput.addEventListener('input', async (e) => {
-  const filmes = await buscarFilmes(e.target.value);
-  renderizarPorGenero(filmes);
-});
+let debounceTimer;
 
-(async () => {
-  const filmes = await buscarFilmes();
-  renderizarPorGenero(filmes);
-})();
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(debounceTimer);
+  //para nao sobrecarregar a api esperar 300ms o usuario parar de digitar para realizar a requisicao.
+  debounceTimer = setTimeout(async () => {
+    const filmes = await buscarFilmes(e.target.value);
+    renderizarPorGenero(filmes);
+  }, 300);
+});

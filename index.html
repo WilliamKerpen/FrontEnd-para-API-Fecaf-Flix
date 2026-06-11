@@ -11,13 +11,49 @@
   <main class="login-container">
     <h1>Bem-vindo ao Fecaf Flix</h1>
 
-      <form id="form-login">
-        <input class="input-group" type="text" id="email" placeholder="E-Mail" required>
-        <input class="input-group" type="password" id="senha" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
-      </form>
+<form id="form-login">
+  <input class="input-group" type="email" id="loginEmail" placeholder="E-Mail" required>
+  <input class="input-group" type="password" id="loginSenha" placeholder="Senha" required>
+  <button type="submit">Entrar</button>
+</form>
 
-    <p>Não tem conta? <a href="#" id="btn-cadastrar">Cadastre-se</a></p>
+<p>Não tem conta? <a href="#" id="btn-cadastrar">Cadastre-se</a></p>
+
+<div class="login-container" id="cadastroContainer" style="display: none;">
+  <h2>Cadastro</h2>
+
+  <form id="formCadastro">
+      <div class="input-group">
+          <label for="cadEmail">E-mail</label>
+          <input type="email" id="cadEmail" required>
+      </div>
+
+      <div class="input-group">
+          <label for="cadNome">Nome</label>
+          <input type="text" id="cadNome" required>
+      </div>
+
+      <div class="input-group">
+          <label for="cadSobrenome">Sobrenome</label>
+          <input type="text" id="cadSobrenome" required>
+      </div>
+
+      <div class="input-group">
+          <label for="cadDataNascimento">Data de Nascimento</label>
+          <input type="date" id="cadDataNascimento" required>
+      </div>
+
+      <div class="input-group">
+          <label for="cadSenha">Senha</label>
+          <input type="password" id="cadSenha" required>
+      </div>
+
+      <button type="submit" class="btn">Cadastrar</button>
+  </form>
+
+  <p id="mensagem" class="erro"></p>
+</div>
+
   </main>
 
   
