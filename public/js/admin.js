@@ -188,7 +188,7 @@ if (formVideo) {
     container.innerHTML = "Carregando filmes...";
 
     try {
-      const response = await fetch(`${API_BASE}/fecaf-flix/videos`, {
+      const response = await fetch(`${API_BASE}/videos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -223,17 +223,17 @@ if (formVideo) {
       e.preventDefault();
 
       const nome = document.getElementById("adminNome").value;
-      const email = document.getElementById("adminEmail").value;
+      const cargo = document.getElementById("adminCargo").value;
       const senha = document.getElementById("adminSenha").value;
 
       try {
-        const response = await fetch(`${API_BASE}fecaf-flix/admin`, {
+        const response = await fetch(`${API_BASE}/admin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ nome, email, senha }),
+          body: JSON.stringify({ nome, cargo, senha }),
         });
 
         const data = await response.json();
