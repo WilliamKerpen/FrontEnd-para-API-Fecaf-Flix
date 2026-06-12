@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mensagem = document.getElementById('mensagem');
 
     if (!token) {
-        window.location.href = "login.html";
+        window.location.href = "loginAdm.html";
         return;
     }
 
