@@ -1,150 +1,319 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ============================================================
+  // CONFIGURAÇÃO BÁSICA
+  // ============================================================
+  const API_BASE = "https://api.fecaf-flix-api.xyz/v1/fecaf-flix";
+  const token = localStorage.getItem("token");
+  const mensagem = document.getElementById("mensagem");
 
-    // ============================================================
-    // 1. VALIDAÇÃO DO TOKEN
-    // ============================================================
-    const token = localStorage.getItem('token');
-    const mensagem = document.getElementById('mensagem');
+  // ============================================================
+  // 1. VALIDAÇÃO DO TOKEN
+  // ============================================================
+  if (!token) {
+    window.location.href = "loginAdm.html";
+    return;
+  }
 
-    if (!token) {
-        window.location.href = "loginAdm.html";
-        return;
-    }
-
-    // ============================================================
-    // 2. BOTÃO DE LOGOUT
-    // ============================================================
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = "loginAdm.html";
+  // ============================================================
+  // 2. LOGOUT
+  // ============================================================
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "loginAdm.html";
     });
+  }
 
-    // ============================================================
-    // 3. CARREGAR GÊNEROS PARA O SELECT
-    // ============================================================
-    async function carregarGeneros() {
-        try {
-            const response = await fetch("https://api.fecaf-flix-api.xyz/v1/fecaf-flix/generos", {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+  // ============================================================
+  // 3. FUNÇÃO AUXILIAR: EXIBIR MENSAGEM GLOBAL
+  // ============================================================
+  function setMensagem(texto, cor = "#ccc") {
+    if (!mensagem) return;
+    mensagem.textContent = texto;
+    mensagem.style.color = cor;
+  }
 
-            const generos = await response.json();
-            const select = document.getElementById('genero');
+  // ============================================================
+  // 4. CARREGAR GÊNEROS (para o select do vídeo)
+  // ============================================================
+  async function carregarGeneros() {
+    try {
+      const response = await fetch(`${API_BASE}/generos`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-            generos.forEach(g => {
-                const option = document.createElement('option');
-                option.value = g.id_genero;
-                option.textContent = g.nome_genero;
-                select.appendChild(option);
-            });
+      const generos = await response.json();
+      const select = document.getElementById("genero");
+      if (!select) return;
 
-        } catch (error) {
-            mensagem.textContent = "Erro ao carregar gêneros";
+      select.innerHTML = "";
+      generos.forEach((g) => {
+        const option = document.createElement("option");
+        option.value = g.id_genero;
+        option.textContent = g.nome_genero;
+        select.appendChild(option);
+      });
+    } catch (error) {
+      setMensagem("Erro ao carregar gêneros", "#ff4d4d");
+      console.error(error);
+    }
+  }
+
+  carregarGeneros();
+
+  // ============================================================
+  // 5. PREVIEW DA CAPA
+  // ============================================================
+  const capaInput = document.getElementById("capa");
+  if (capaInput) {
+    capaInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      const preview = document.getElementById("previewCapa");
+      if (file && preview) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      }
+    });
+  }
+
+  // ============================================================
+  // 6. PREVIEW DO VÍDEO
+  // ============================================================
+  const videoInput = document.getElementById("video");
+  if (videoInput) {
+    videoInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      const preview = document.getElementById("previewVideo");
+      if (file && preview) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      }
+    });
+  }
+
+  // ============================================================
+  // 7. ENVIO DO FORMULÁRIO DE VÍDEO
+  // ============================================================
+  const formVideo = document.getElementById("formVideo");
+  if (formVideo) {
+    formVideo.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("nome_filme", document.getElementById("nome_filme").value);
+      formData.append("sinopse", document.getElementById("sinopse").value);
+      formData.append("id_genero", document.getElementById("genero").value);
+      formData.append("capa", document.getElementById("capa").files[0]);
+      formData.append("video", document.getElementById("video").files[0]);
+
+      try {
+        const response = await fetch(`${API_BASE}/videos/filme`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMensagem(data.erro || "Erro ao cadastrar vídeo", "#ff4d4d");
+          return;
         }
-    }
 
-    carregarGeneros();
-
-    // ============================================================
-    // 4. PREVIEW DA CAPA
-    // ============================================================
-    const capaInput = document.getElementById('capa');
-    if (capaInput) {
-        capaInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            const preview = document.getElementById('previewCapa');
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = "block";
-            }
-        });
-    }
-
-    // ============================================================
-    // 5. PREVIEW DO VÍDEO
-    // ============================================================
-    const videoInput = document.getElementById('video');
-    if (videoInput) {
-        videoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            const preview = document.getElementById('previewVideo');
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = "block";
-            }
-        });
-    }
-
-    // ============================================================
-    // 6. ENVIO DO FORMULÁRIO DE VÍDEO
-    // ============================================================
-    const formVideo = document.getElementById('formVideo');
-    if (formVideo) {
-        formVideo.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData();
-            formData.append("nome_filme", document.getElementById('nome_filme').value);
-            formData.append("sinopse", document.getElementById('sinopse').value);
-            formData.append("id_genero", document.getElementById('genero').value);
-            formData.append("capa", document.getElementById('capa').files[0]);
-            formData.append("video", document.getElementById('video').files[0]);
-
-            try {
-                const response = await fetch("https://api.fecaf-flix-api.xyz/v1/fecaf-flix/video/filme", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` },
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    mensagem.textContent = data.erro || "Erro ao cadastrar vídeo";
-                    mensagem.style.color = "#ff4d4d";
-                    return;
-                }
-
-                mensagem.textContent = "Vídeo cadastrado com sucesso!";
-                mensagem.style.color = "#00ff66";
-
-                formVideo.reset();
-                document.getElementById('previewCapa').style.display = "none";
-                document.getElementById('previewVideo').style.display = "none";
-
-            } catch (error) {
-                mensagem.textContent = "Erro de conexão com o servidor";
-                mensagem.style.color = "#ff4d4d";
-            }
-        });
-    }
-
-    // ============================================================
-    // 7. ABRIR MODAIS
-    // ============================================================
-    document.querySelectorAll(".menu-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const modalId = btn.getAttribute("data-modal");
-            document.getElementById(modalId).style.display = "flex";
-        });
+        setMensagem("Vídeo cadastrado com sucesso!", "#00ff66");
+        formVideo.reset();
+        const previewCapa = document.getElementById("previewCapa");
+        const previewVideo = document.getElementById("previewVideo");
+        if (previewCapa) previewCapa.style.display = "none";
+        if (previewVideo) previewVideo.style.display = "none";
+      } catch (error) {
+        setMensagem("Erro de conexão com o servidor", "#ff4d4d");
+        console.error(error);
+      }
     });
+  }
 
-    // ============================================================
-    // 8. FECHAR MODAIS
-    // ============================================================
-    document.querySelectorAll(".close").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.parentElement.parentElement.style.display = "none";
+  // ============================================================
+  // 8. CARREGAR LISTA DE USUÁRIOS
+  // ============================================================
+  async function carregarUsuarios() {
+    const container = document.getElementById("listaUsuarios");
+    if (!container) return;
+
+    container.innerHTML = "Carregando usuários...";
+
+    try {
+      const response = await fetch(`${API_BASE}/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const usuarios = await response.json();
+
+      if (!Array.isArray(usuarios) || usuarios.length === 0) {
+        container.innerHTML = "<p>Nenhum usuário encontrado.</p>";
+        return;
+      }
+
+      const ul = document.createElement("ul");
+      usuarios.forEach((u) => {
+        const li = document.createElement("li");
+        li.textContent = `${u.id_user} - ${u.nome} (${u.email})`;
+        ul.appendChild(li);
+      });
+
+      container.innerHTML = "";
+      container.appendChild(ul);
+    } catch (error) {
+      container.innerHTML = "<p>Erro ao carregar usuários.</p>";
+      console.error(error);
+    }
+  }
+
+  // ============================================================
+  // 9. CARREGAR LISTA DE FILMES
+  // ============================================================
+  async function carregarFilmes() {
+    const container = document.getElementById("listaFilmes");
+    if (!container) return;
+
+    container.innerHTML = "Carregando filmes...";
+
+    try {
+      const response = await fetch(`${API_BASE}/fecaf-flix/videos`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const filmes = await response.json();
+
+      if (!Array.isArray(filmes) || filmes.length === 0) {
+        container.innerHTML = "<p>Nenhum filme encontrado.</p>";
+        return;
+      }
+
+      const ul = document.createElement("ul");
+      filmes.forEach((f) => {
+        const li = document.createElement("li");
+        li.textContent = `${f.id_filme} - ${f.nome_filme}`;
+        ul.appendChild(li);
+      });
+
+      container.innerHTML = "";
+      container.appendChild(ul);
+    } catch (error) {
+      container.innerHTML = "<p>Erro ao carregar filmes.</p>";
+      console.error(error);
+    }
+  }
+
+  // ============================================================
+  // 10. CRIAR NOVO ADMIN
+  // ============================================================
+  const formAdmin = document.getElementById("formAdmin");
+  if (formAdmin) {
+    formAdmin.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById("adminNome").value;
+      const email = document.getElementById("adminEmail").value;
+      const senha = document.getElementById("adminSenha").value;
+
+      try {
+        const response = await fetch(`${API_BASE}fecaf-flix/admin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ nome, email, senha }),
         });
-    });
 
-    // ============================================================
-    // 9. FECHAR MODAL AO CLICAR FORA
-    // ============================================================
-    document.querySelectorAll(".modal").forEach(modal => {
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) modal.style.display = "none";
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMensagem(data.erro || "Erro ao criar admin", "#ff4d4d");
+          return;
+        }
+
+        setMensagem("Admin criado com sucesso!", "#00ff66");
+        formAdmin.reset();
+      } catch (error) {
+        setMensagem("Erro de conexão ao criar admin", "#ff4d4d");
+        console.error(error);
+      }
+    });
+  }
+
+  // ============================================================
+  // 11. ADICIONAR NOVO GÊNERO
+  // ============================================================
+  const formGenero = document.getElementById("formGenero");
+  if (formGenero) {
+    formGenero.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nomeGenero = document.getElementById("nomeGenero").value;
+
+      try {
+        const response = await fetch(`${API_BASE}/generos`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ nome_genero: nomeGenero }),
         });
-    });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMensagem(data.erro || "Erro ao adicionar gênero", "#ff4d4d");
+          return;
+        }
+
+        setMensagem("Gênero adicionado com sucesso!", "#00ff66");
+        formGenero.reset();
+        carregarGeneros(); // atualiza o select do vídeo
+      } catch (error) {
+        setMensagem("Erro de conexão ao adicionar gênero", "#ff4d4d");
+        console.error(error);
+      }
+    });
+  }
+
+  // ============================================================
+  // 12. ABRIR MODAIS + DISPARAR CARREGAMENTO QUANDO PRECISO
+  // ============================================================
+  document.querySelectorAll(".menu-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modalId = btn.getAttribute("data-modal");
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+
+      // Quando abrir cada modal, dispara a função correspondente
+      if (modalId === "modalUsers") carregarUsuarios();
+      if (modalId === "modalFilmes") carregarFilmes();
+
+      modal.style.display = "flex";
+    });
+  });
+
+  // ============================================================
+  // 13. FECHAR MODAIS
+  // ============================================================
+  document.querySelectorAll(".close").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modal = btn.closest(".modal");
+      if (modal) modal.style.display = "none";
+    });
+  });
+
+  // ============================================================
+  // 14. FECHAR MODAL AO CLICAR FORA
+  // ============================================================
+  document.querySelectorAll(".modal").forEach((modal) => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  });
 });
