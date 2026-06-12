@@ -161,6 +161,7 @@ input, textarea, select {
 
 .modal-content {
     background: #fff;
+    color: #0d0d0d;
     width: 90%;
     max-width: 600px;
     max-height: 80vh;
