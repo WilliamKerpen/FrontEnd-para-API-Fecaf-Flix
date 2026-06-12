@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Cadastro de Vídeo</title>
+    <title>Admin - FECAF FLIX</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="public/css/admin.css">
+
+    <!-- JS -->
     <script src="./public/js/admin.js" defer></script>
 </head>
 
 <body>
 
+    <!-- SIDEBAR LATERAL -->
     <aside class="sidebar">
         <h2>FECAF FLIX</h2>
 
@@ -24,9 +29,13 @@
         <button id="logoutBtn" class="logout">Sair</button>
     </aside>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="content">
         <h1>Painel Administrativo</h1>
         <p>Selecione uma opção no menu ao lado.</p>
+
+        <!-- Mensagens globais -->
+        <p id="mensagem" class="mensagem"></p>
     </main>
 
     <!-- MODAL: Adicionar Vídeo -->
@@ -35,40 +44,36 @@
             <span class="close">&times;</span>
             <h2>Cadastrar Novo Vídeo</h2>
 
-            <!-- Aqui entra seu formulário atual -->
             <form id="formVideo" enctype="multipart/form-data">
-                 <div class="input-group">
-                <label for="nome_filme">Nome do Filme</label>
-                <input type="text" id="nome_filme" name="nome_filme" required>
-            </div>
 
-            <div class="input-group">
-                <label for="sinopse">Sinopse</label>
-                <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
-            </div>
+                <div class="input-group">
+                    <label for="nome_filme">Nome do Filme</label>
+                    <input type="text" id="nome_filme" required>
+                </div>
 
-            <div class="input-group">
-                <label for="genero">Gênero</label>
-                <select id="genero" name="genero" required></select>
-            </div>
+                <div class="input-group">
+                    <label for="sinopse">Sinopse</label>
+                    <textarea id="sinopse" rows="4" required></textarea>
+                </div>
 
+                <div class="input-group">
+                    <label for="genero">Gênero</label>
+                    <select id="genero" required></select>
+                </div>
 
-            <div class="input-group">
-                <label for="capa">Capa do Filme</label>
-                <input type="file" id="capa" name="capa" accept="image/*" required>
-                <img id="previewCapa" class="preview" alt="">
-            </div>
+                <div class="input-group">
+                    <label for="capa">Capa do Filme</label>
+                    <input type="file" id="capa" accept="image/*" required>
+                    <img id="previewCapa" class="preview" style="display:none;">
+                </div>
 
+                <div class="input-group">
+                    <label for="video">Arquivo de Vídeo</label>
+                    <input type="file" id="video" accept="video/mp4" required>
+                    <video id="previewVideo" class="preview" controls style="display:none;"></video>
+                </div>
 
-            <div class="input-group">
-                <label for="video">Arquivo de Vídeo</label>
-                <input type="file" id="video" name="video" accept="video/mp4" required>
-                <video id="previewVideo" class="preview" controls></video>
-            </div>
-
-            <button type="submit" class="btn">Cadastrar Vídeo</button>
-
-            <p id="mensagem" class="mensagem"></p>
+                <button type="submit" class="btn">Cadastrar Vídeo</button>
             </form>
         </div>
     </div>
@@ -88,9 +93,9 @@
             <span class="close">&times;</span>
             <h2>Criar Novo Admin</h2>
             <form id="formAdmin">
-                <input type="text" placeholder="Nome" required>
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Senha" required>
+                <input type="text" id="adminNome" placeholder="Nome" required>
+                <input type="email" id="adminEmail" placeholder="Email" required>
+                <input type="password" id="adminSenha" placeholder="Senha" required>
                 <button type="submit">Criar Admin</button>
             </form>
         </div>
@@ -111,14 +116,11 @@
             <span class="close">&times;</span>
             <h2>Adicionar Gênero</h2>
             <form id="formGenero">
-                <input type="text" placeholder="Nome do gênero" required>
+                <input type="text" id="nomeGenero" placeholder="Nome do gênero" required>
                 <button type="submit">Adicionar</button>
             </form>
         </div>
     </div>
 
-    
 </body>
-
-
 </html>
