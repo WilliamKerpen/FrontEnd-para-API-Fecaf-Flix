@@ -8,10 +8,25 @@
 body {
     background: #0d0d0d;
     color: #fff;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.page-wrapper {
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    flex-direction: column;
+}
+
+/* main centralizado, mas sem brigar com o footer */
+.login-container {
+    background: #1a1a1a;
+    padding: 40px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    text-align: center;
+    margin: auto; /* centraliza dentro do page-wrapper */
 }
 
 .login-container {
@@ -82,4 +97,31 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* footer sempre embaixo */
+.footer {
+    margin-top: auto;
+    padding: 20px;
+    text-align: center;
+    color: #ccc;
+    font-size: 14px;
+    background: #111;
+    border-top: 1px solid #333;
+}
+
+.footer a {
+    color: #ff0000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer .sobre {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
 }
