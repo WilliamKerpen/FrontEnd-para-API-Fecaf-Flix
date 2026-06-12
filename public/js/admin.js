@@ -95,44 +95,52 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================================
   // 7. ENVIO DO FORMULÁRIO DE VÍDEO
   // ============================================================
-  const formVideo = document.getElementById("formVideo");
-  if (formVideo) {
-    formVideo.addEventListener("submit", async (e) => {
-      e.preventDefault();
+// Responsabilidade: enviar todos os dados do filme para a API,
+// incluindo nome, ano, sinopse, gênero, capa e vídeo.
+const formVideo = document.getElementById("formVideo");
 
-      const formData = new FormData();
-      formData.append("nome_filme", document.getElementById("nome_filme").value);
-      formData.append("sinopse", document.getElementById("sinopse").value);
-      formData.append("id_genero", document.getElementById("genero").value);
-      formData.append("capa", document.getElementById("capa").files[0]);
-      formData.append("video", document.getElementById("video").files[0]);
+if (formVideo) {
+  formVideo.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      try {
-        const response = await fetch(`${API_BASE}/videos/filme`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        });
+    // Coleta dos dados do formulário
+    const formData = new FormData();
+    formData.append("nome_filme", document.getElementById("nome_filme").value);
+    formData.append("ano", document.getElementById("ano").value); // <-- ANO ADICIONADO
+    formData.append("sinopse", document.getElementById("sinopse").value);
+    formData.append("id_genero", document.getElementById("genero").value);
+    formData.append("capa", document.getElementById("capa").files[0]);
+    formData.append("video", document.getElementById("video").files[0]);
 
-        const data = await response.json();
+    try {
+      // Envio para a API
+      const response = await fetch(`${API_BASE}/videos/filme`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
 
-        if (!response.ok) {
-          setMensagem(data.erro || "Erro ao cadastrar vídeo", "#ff4d4d");
-          return;
-        }
+      const data = await response.json();
 
-        setMensagem("Vídeo cadastrado com sucesso!", "#00ff66");
-        formVideo.reset();
-        const previewCapa = document.getElementById("previewCapa");
-        const previewVideo = document.getElementById("previewVideo");
-        if (previewCapa) previewCapa.style.display = "none";
-        if (previewVideo) previewVideo.style.display = "none";
-      } catch (error) {
-        setMensagem("Erro de conexão com o servidor", "#ff4d4d");
-        console.error(error);
+      if (!response.ok) {
+        setMensagem(data.erro || "Erro ao cadastrar vídeo", "#ff4d4d");
+        return;
       }
-    });
-  }
+
+      // Sucesso
+      setMensagem("Vídeo cadastrado com sucesso!", "#00ff66");
+
+      // Reset do formulário e previews
+      formVideo.reset();
+      document.getElementById("previewCapa").style.display = "none";
+      document.getElementById("previewVideo").style.display = "none";
+
+    } catch (error) {
+      setMensagem("Erro de conexão com o servidor", "#ff4d4d");
+      console.error(error);
+    }
+  });
+}
 
   // ============================================================
   // 8. CARREGAR LISTA DE USUÁRIOS
