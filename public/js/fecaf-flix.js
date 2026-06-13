@@ -10,6 +10,7 @@ const token = localStorage.getItem("token");
 
 // Elementos principais
 const catalogo = document.getElementById("catalogo");
+console.log("catalogo =", catalogo); // teste
 const searchInput = document.getElementById("search");
 
 // ============================================================
@@ -19,6 +20,8 @@ if (!token) {
   alert("Faça login para acessar o catálogo.");
   window.location.href = "login.html";
 }
+console.log(token);//teste
+console.log("Script Fecaf Flix carregado");
 
 // ============================================================
 // 2. BUSCAR TODOS OS GÊNEROS
@@ -31,7 +34,7 @@ async function buscarGeneros() {
   );
 
   return await response.json();
-}
+  }
 
 // ============================================================
 // 3. BUSCAR FILMES POR GÊNERO
@@ -65,6 +68,7 @@ async function buscarFilmesPorNome(nome) {
 // 5. RENDERIZAR CARROSSEIS POR GÊNERO
 // ============================================================
 async function renderizarCatalogo() {
+  console.log("renderizarCatalogo iniciou");
   catalogo.innerHTML = "";
 
   const generos = await buscarGeneros();
