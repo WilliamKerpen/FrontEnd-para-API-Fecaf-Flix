@@ -55,3 +55,69 @@ body {
   margin: .5rem;
   font-size: 1rem;
 }
+
+.card-content {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  opacity: 0;
+  transition: opacity .3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.card-content:hover .overlay {
+  opacity: 1;
+}
+
+.play-btn {
+  background: #e50914;
+  border: none;
+  padding: .5rem 1rem;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: .5rem;
+}
+
+.player {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.player video {
+  width: 80%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.fechar-player {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  background: transparent;
+  color: #fff;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+}
