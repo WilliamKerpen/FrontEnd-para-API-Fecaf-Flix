@@ -135,21 +135,50 @@ async function renderizarCatalogo() {
 // ============================================================
 // 6. PLAYER DE VÍDEO EM TELA CHEIA
 // ============================================================
-function abrirPlayer(videoUrl) {
+function abrirPlayer(urlVideo) {
   const player = document.createElement("div");
   player.classList.add("player");
 
-  const fileName = videoUrl.split("/").pop();
+  const fileName = urlVideo.split("/").pop();
   const streamUrl = `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/stream/${fileName}`;
 
   player.innerHTML = `
-    <video src="${streamUrl}" controls autoplay></video>
+    <video 
+      id="player-video"
+      src="${streamUrl}"
+      controls
+      playsinline
+      webkit-playsinline
+      preload="metadata"
+      style="max-height: 90vh; width: 90vw; border-radius: 8px;"
+    ></video>
+
     <button class="fechar-player">✖</button>
   `;
 
   document.body.appendChild(player);
 
+  const video = player.querySelector("#player-video");
+
+  // 🔥 MOBILE FIX: iniciar o vídeo manualmente
+  const tentarPlay = () => {
+    video.play().catch(err => {
+      console.warn("Play bloqueado, aguardando interação:", err);
+    });
+  };
+
+  // Tenta tocar assim que possível
+  video.addEventListener("loadeddata", tentarPlay);
+
+  // Se o navegador bloquear, tocar no primeiro toque
+  video.addEventListener("click", tentarPlay);
+  player.addEventListener("click", (e) => {
+    if (e.target === player) tentarPlay();
+  });
+
+  // Botão de fechar
   player.querySelector(".fechar-player").addEventListener("click", () => {
+    video.pause();
     player.remove();
   });
 }
@@ -181,6 +210,8 @@ searchInput.addEventListener("input", (e) => {
 // 8. RENDERIZAR RESULTADO DA BUSCA
 // ============================================================
 function renderizarResultadoBusca(filmes) {
+  catalogo.innerHTML = "";
+
   const secao = document.createElement("section");
   secao.classList.add("secao");
   secao.innerHTML = `<h2>Resultados da busca</h2>`;
@@ -189,15 +220,26 @@ function renderizarResultadoBusca(filmes) {
   lista.classList.add("lista-filmes");
 
   filmes.forEach((filme) => {
+
+    // 🔥 NORMALIZAÇÃO DA CAPA
+    let urlCapa = filme.capa;
+    if (!urlCapa.startsWith("http")) {
+      urlCapa = `https://api.fecaf-flix-api.xyz${urlCapa}`;
+    }
+
+    // 🔥 NORMALIZAÇÃO DO VÍDEO
+    let fileName = filme.url_video;
+    fileName = fileName.replace("/public/videos/", "");
+
     const card = document.createElement("div");
     card.classList.add("card");
 
     card.innerHTML = `
       <div class="card-content">
-        <img src="${filme.capa}" alt="${filme.nome_filme}">
+        <img src="${urlCapa}" alt="${filme.nome_filme}">
         <div class="overlay">
           <p>${filme.sinopse}</p>
-          <button class="play-btn" data-video="${filme.url_video}">▶ Assistir</button>
+          <button class="play-btn" data-video="${fileName}">▶ Assistir</button>
         </div>
         <h3>${filme.nome_filme}</h3>
       </div>
@@ -209,6 +251,7 @@ function renderizarResultadoBusca(filmes) {
   secao.appendChild(lista);
   catalogo.appendChild(secao);
 
+  // Ativa o player
   document.querySelectorAll(".play-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const videoUrl = e.target.getAttribute("data-video");

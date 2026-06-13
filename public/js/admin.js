@@ -108,7 +108,7 @@ if (formVideo) {
     formData.append("nome_filme", document.getElementById("nome_filme").value);
     formData.append("ano", document.getElementById("ano").value); // <-- ANO ADICIONADO
     formData.append("sinopse", document.getElementById("sinopse").value);
-    formData.append("id_genero", document.getElementById("genero").value);
+    formData.append("generos[]", document.getElementById("genero").value);
     formData.append("capa", document.getElementById("capa").files[0]);
     formData.append("video", document.getElementById("video").files[0]);
 
