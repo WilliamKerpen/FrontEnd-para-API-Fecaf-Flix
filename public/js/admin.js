@@ -173,12 +173,13 @@ if (formVideo) {
       container.innerHTML = "";
       container.appendChild(ul);
     } catch (error) {
+      console.log("RETORNO DA API:", usuarios);
       container.innerHTML = "<p>Erro ao carregar usuários.</p>";
       console.error(error);
     }
   }
 
-  console.log("RETORNO DA API:", usuarios);
+  
 
   // ============================================================
   // 9. CARREGAR LISTA DE FILMES
