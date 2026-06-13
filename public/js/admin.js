@@ -143,7 +143,7 @@ if (formVideo) {
 }
 
   // ============================================================
-  // 8. CARREGAR LISTA DE USUÁRIOS
+  // 8. CARREGAR LISTA DE USUÁRIOS  Padrao
   // ============================================================
   async function carregarUsuarios() {
     const container = document.getElementById("listaUsuarios");
@@ -177,6 +177,8 @@ if (formVideo) {
       console.error(error);
     }
   }
+
+  console.log("RETORNO DA API:", usuarios);
 
   // ============================================================
   // 9. CARREGAR LISTA DE FILMES
