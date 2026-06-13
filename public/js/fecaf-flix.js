@@ -135,13 +135,19 @@ async function renderizarCatalogo() {
 // ============================================================
 // 6. PLAYER DE VÍDEO EM TELA CHEIA
 // ============================================================
+// Abre o player de vídeo em tela cheia e garante compatibilidade com mobile
 function abrirPlayer(urlVideo) {
+  // Cria o container do player
   const player = document.createElement("div");
   player.classList.add("player");
 
+  // Extrai apenas o nome do arquivo do vídeo
   const fileName = urlVideo.split("/").pop();
+
+  // Monta a URL de streaming da API
   const streamUrl = `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/stream/${fileName}`;
 
+  // Estrutura HTML do player
   player.innerHTML = `
     <video 
       id="player-video"
@@ -156,32 +162,40 @@ function abrirPlayer(urlVideo) {
     <button class="fechar-player">✖</button>
   `;
 
+  // Adiciona o player ao documento
   document.body.appendChild(player);
 
+  // Referência ao elemento de vídeo
   const video = player.querySelector("#player-video");
 
-  // 🔥 MOBILE FIX: iniciar o vídeo manualmente
-  const tentarPlay = () => {
-    video.play().catch(err => {
-      console.warn("Play bloqueado, aguardando interação:", err);
+  // Função para tentar iniciar o vídeo manualmente
+  function tentarPlay() {
+    video.play().catch((err) => {
+      console.warn("Reprodução bloqueada pelo navegador:", err);
     });
-  };
+  }
 
-  // Tenta tocar assim que possível
+  // Tenta iniciar o vídeo assim que os dados forem carregados
   video.addEventListener("loadeddata", tentarPlay);
 
-  // Se o navegador bloquear, tocar no primeiro toque
+  // Caso o navegador bloqueie, inicia no primeiro toque no vídeo
   video.addEventListener("click", tentarPlay);
+
+  // Caso o usuário toque fora do vídeo, também tenta iniciar
   player.addEventListener("click", (e) => {
-    if (e.target === player) tentarPlay();
+    if (e.target === player) {
+      tentarPlay();
+    }
   });
 
-  // Botão de fechar
-  player.querySelector(".fechar-player").addEventListener("click", () => {
+  // Botão de fechar o player
+  const btnFechar = player.querySelector(".fechar-player");
+  btnFechar.addEventListener("click", () => {
     video.pause();
     player.remove();
   });
 }
+
 
 // ============================================================
 // 7. BUSCA COM DEBOUNCE
@@ -221,13 +235,13 @@ function renderizarResultadoBusca(filmes) {
 
   filmes.forEach((filme) => {
 
-    // 🔥 NORMALIZAÇÃO DA CAPA
+    // NORMALIZAÇÃO DA CAPA
     let urlCapa = filme.capa;
     if (!urlCapa.startsWith("http")) {
       urlCapa = `https://api.fecaf-flix-api.xyz${urlCapa}`;
     }
 
-    // 🔥 NORMALIZAÇÃO DO VÍDEO
+    // NORMALIZAÇÃO DO VÍDEO
     let fileName = filme.url_video;
     fileName = fileName.replace("/public/videos/", "");
 

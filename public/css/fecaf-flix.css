@@ -97,6 +97,9 @@ body {
   margin-top: .5rem;
 }
 
+/* ================================
+   PLAYER FULLSCREEN (MOBILE + DESKTOP)
+   ================================ */
 .player {
   position: fixed;
   top: 0;
@@ -107,13 +110,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
+  pointer-events: none;
 }
 
 .player video {
-  width: 80%;
-  height: auto;
-  border-radius: 8px;
+  width: 90vw;
+  max-height: 90vh;
+  border-radius: 10px;
+  pointer-events: auto;
+  z-index: 10000;
+  background: #000;
 }
 
 .fechar-player {
@@ -125,4 +132,6 @@ body {
   font-size: 2rem;
   border: none;
   cursor: pointer;
+  pointer-events: auto;
+  z-index: 10001;
 }
