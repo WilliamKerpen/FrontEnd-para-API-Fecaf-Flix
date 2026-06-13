@@ -157,6 +157,7 @@ if (formVideo) {
       });
 
       const usuarios = await response.json();
+      console.log("usuarios:" + usuarios)
 
       if (!Array.isArray(usuarios) || usuarios.length === 0) {
         container.innerHTML = "<p>Nenhum usuário encontrado.</p>";
@@ -173,7 +174,6 @@ if (formVideo) {
       container.innerHTML = "";
       container.appendChild(ul);
     } catch (error) {
-      console.log("RETORNO DA API:", usuarios);
       container.innerHTML = "<p>Erro ao carregar usuários.</p>";
       console.error(error);
     }
