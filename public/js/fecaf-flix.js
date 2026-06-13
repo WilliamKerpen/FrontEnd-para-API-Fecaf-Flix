@@ -135,17 +135,27 @@ async function renderizarCatalogo() {
 // ============================================================
 // 6. PLAYER DE VÍDEO EM TELA CHEIA
 // ============================================================
-// Abre o player de vídeo em tela cheia e garante compatibilidade com iOS e desktop
+// Abre o player de forma diferente dependendo do dispositivo
 function abrirPlayer(urlVideo) {
-  // Cria o container do player
+  // Detecta se é mobile (iPhone, Android, Chrome Mobile, Safari Mobile)
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  // Extrai o nome do arquivo
+  const fileName = urlVideo.split("/").pop();
+
+  // URL de streaming
+  const streamUrl = `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/stream/${fileName}`;
+
+  // Se for mobile, abre em nova aba (solução garantida)
+  if (isMobile) {
+    window.open(streamUrl, "_blank");
+    return;
+  }
+
+  // Caso contrário, usa o player modal no desktop
   const player = document.createElement("div");
   player.classList.add("player");
 
-  // Extrai o nome do arquivo do vídeo
-  const fileName = urlVideo.split("/").pop();
-  const streamUrl = `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/stream/${fileName}`;
-
-  // Estrutura do player
   player.innerHTML = `
     <video 
       id="player-video"
@@ -156,6 +166,7 @@ function abrirPlayer(urlVideo) {
       preload="metadata"
       style="max-height: 90vh; width: 90vw; border-radius: 8px;"
     ></video>
+
     <button class="fechar-player">✖</button>
   `;
 
@@ -164,35 +175,18 @@ function abrirPlayer(urlVideo) {
   const video = player.querySelector("#player-video");
   const btnFechar = player.querySelector(".fechar-player");
 
-  // Função para iniciar o vídeo manualmente
-  function tentarPlay() {
-    video.play().catch((err) => {
-      console.warn("Reprodução bloqueada:", err);
-    });
-  }
-
-  // Inicia o vídeo apenas após interação do usuário
-  video.addEventListener("click", tentarPlay);
-  player.addEventListener("click", (e) => {
-    if (e.target === player) {
-      tentarPlay();
-    }
-  });
-
-  // Corrige o bug do primeiro clique no desktop
+  // Tenta iniciar o vídeo no desktop
   video.addEventListener("loadeddata", () => {
-    // Se o vídeo estiver visível e o usuário já clicou, tenta tocar
-    if (document.activeElement === video) {
-      tentarPlay();
-    }
+    video.play().catch(() => {});
   });
 
-  // Botão de fechar
+  // Fecha o player
   btnFechar.addEventListener("click", () => {
     video.pause();
     player.remove();
   });
 }
+
 
 
 // ============================================================
