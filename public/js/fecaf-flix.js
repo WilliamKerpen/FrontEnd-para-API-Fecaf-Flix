@@ -1,135 +1,204 @@
 // ============================================================
 // Fecaf Flix - Página do Usuário
 // ============================================================
-// Responsável por exibir o catálogo de filmes agrupados por gênero,
-// permitir busca, mostrar sinopse ao passar o mouse e assistir vídeos
-// em tela cheia com controles padrão.
+// Exibe catálogo estilo Netflix, com carrosséis por gênero,
+// sinopse ao passar o mouse e player em tela cheia.
 // ============================================================
 
-// Recupera o token salvo no login
-const token = localStorage.getItem('token');
+// Recupera token salvo no login
+const token = localStorage.getItem("token");
 
-// Elementos principais da página
-const catalogo = document.getElementById('catalogo');
-const searchInput = document.getElementById('search');
+// Elementos principais
+const catalogo = document.getElementById("catalogo");
+const searchInput = document.getElementById("search");
 
 // ============================================================
-// 1. VALIDAÇÃO DE LOGIN
+// 1. VALIDAÇÃO DO LOGIN
 // ============================================================
-// Se o usuário não estiver logado, redireciona para a página de login.
 if (!token) {
-  alert('Faça login para acessar o catálogo.');
-  window.location.href = 'login.html';
+  alert("Faça login para acessar o catálogo.");
+  window.location.href = "login.html";
 }
 
 // ============================================================
-// 2. BUSCAR FILMES NA API
+// 2. BUSCAR TODOS OS GÊNEROS
 // ============================================================
-// Faz requisição à API para buscar filmes.
-// Se o parâmetro "query" estiver vazio, retorna todos os filmes.
-// Caso contrário, filtra pelo termo de busca.
-async function buscarFilmes(query = '') {
+// GET /generos
+async function buscarGeneros() {
   const response = await fetch(
-    `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/filmes?search=${query}`,
-    { headers: { 'Authorization': `Bearer ${token}` } }
+    "https://api.fecaf-flix-api.xyz/v1/fecaf-flix/generos",
+    { headers: { Authorization: `Bearer ${token}` } }
   );
 
   return await response.json();
 }
 
 // ============================================================
-// 3. RENDERIZAR FILMES AGRUPADOS POR GÊNERO
+// 3. BUSCAR FILMES POR GÊNERO
 // ============================================================
-// Cria seções horizontais (carrosséis) para cada gênero.
-// Dentro de cada seção, exibe os cards dos filmes com capa, sinopse e botão "Assistir".
-function renderizarPorGenero(filmes) {
-  catalogo.innerHTML = '';
+// GET /filmes/genero?genero=Ação
+async function buscarFilmesPorGenero(genero) {
+  const response = await fetch(
+    `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/filmes/genero?genero=${genero}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 
-  // Extrai os gêneros únicos do array de filmes
-  const generos = [...new Set(filmes.map(f => f.genero))];
+  if (!response.ok) return [];
+  return await response.json();
+}
 
-  generos.forEach(genero => {
-    const secao = document.createElement('section');
-    secao.classList.add('secao');
-    secao.innerHTML = `<h2>${genero}</h2>`;
+// ============================================================
+// 4. BUSCAR FILMES POR NOME OU SINOPSE
+// ============================================================
+// GET /videos/filmes?nome=matrix
+async function buscarFilmesPorNome(nome) {
+  const response = await fetch(
+    `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/videos/filmes?nome=${nome}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 
-    const lista = document.createElement('div');
-    lista.classList.add('lista-filmes');
+  if (!response.ok) return [];
+  return await response.json();
+}
 
-    // Cria os cards de cada filme dentro do gênero
-    filmes
-      .filter(f => f.genero === genero)
-      .forEach(filme => {
-        const card = document.createElement('div');
-        card.classList.add('card');
+// ============================================================
+// 5. RENDERIZAR CARROSSEIS POR GÊNERO
+// ============================================================
+async function renderizarCatalogo() {
+  catalogo.innerHTML = "";
 
-        // Estrutura do card com overlay e botão de assistir
-        card.innerHTML = `
-          <div class="card-content">
-            <img src="${filme.capa}" alt="${filme.nome_filme}">
-            <div class="overlay">
-              <p>${filme.sinopse}</p>
-              <button class="play-btn" data-video="${filme.video}">▶ Assistir</button>
-            </div>
-            <h3>${filme.nome_filme}</h3>
+  const generos = await buscarGeneros();
+
+  for (const genero of generos) {
+    const nomeGenero = genero.nome_genero;
+
+    const filmes = await buscarFilmesPorGenero(nomeGenero);
+    if (!filmes || filmes.length === 0) continue;
+
+    const secao = document.createElement("section");
+    secao.classList.add("secao");
+    secao.innerHTML = `<h2>${nomeGenero}</h2>`;
+
+    const lista = document.createElement("div");
+    lista.classList.add("lista-filmes");
+
+    filmes.forEach((filme) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+
+      card.innerHTML = `
+        <div class="card-content">
+          <img src="${filme.capa}" alt="${filme.nome_filme}">
+          <div class="overlay">
+            <p>${filme.sinopse}</p>
+            <button class="play-btn" data-video="${filme.url_video}">▶ Assistir</button>
           </div>
-        `;
+          <h3>${filme.nome_filme}</h3>
+        </div>
+      `;
 
-        lista.appendChild(card);
-      });
+      lista.appendChild(card);
+    });
 
     secao.appendChild(lista);
     catalogo.appendChild(secao);
-  });
+  }
 
-  // Após renderizar, adiciona eventos aos botões "Assistir"
-  document.querySelectorAll('.play-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const videoUrl = e.target.getAttribute('data-video');
+  // Ativa botões de assistir
+  document.querySelectorAll(".play-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const videoUrl = e.target.getAttribute("data-video");
       abrirPlayer(videoUrl);
     });
   });
 }
 
 // ============================================================
-// 4. ABRIR PLAYER DE VÍDEO EM TELA CHEIA
+// 6. PLAYER DE VÍDEO EM TELA CHEIA
 // ============================================================
-// Cria um elemento overlay com o vídeo e botão de fechar.
-// O vídeo é exibido com controles padrão (play, pause, avançar, etc.).
 function abrirPlayer(videoUrl) {
-  const player = document.createElement('div');
-  player.classList.add('player');
+  const player = document.createElement("div");
+  player.classList.add("player");
+
+  const fileName = videoUrl.split("/").pop();
+  const streamUrl = `https://api.fecaf-flix-api.xyz/v1/fecaf-flix/stream/${fileName}`;
+
   player.innerHTML = `
-    <video src="${videoUrl}" controls autoplay></video>
+    <video src="${streamUrl}" controls autoplay></video>
     <button class="fechar-player">✖</button>
   `;
+
   document.body.appendChild(player);
 
-  // Fecha o player ao clicar no botão "✖"
-  const fechar = player.querySelector('.fechar-player');
-  fechar.addEventListener('click', () => player.remove());
+  player.querySelector(".fechar-player").addEventListener("click", () => {
+    player.remove();
+  });
 }
 
 // ============================================================
-// 5. BUSCA DE FILMES (INPUT COM DEBOUNCE)
+// 7. BUSCA COM DEBOUNCE
 // ============================================================
-// Espera o usuário parar de digitar por 300ms antes de buscar,
-// evitando sobrecarregar a API com requisições consecutivas.
 let debounceTimer;
 
-searchInput.addEventListener('input', (e) => {
+searchInput.addEventListener("input", (e) => {
   clearTimeout(debounceTimer);
+
   debounceTimer = setTimeout(async () => {
-    const filmes = await buscarFilmes(e.target.value);
-    renderizarPorGenero(filmes);
+    const nome = e.target.value.trim();
+
+    if (nome === "") {
+      renderizarCatalogo();
+      return;
+    }
+
+    const filmes = await buscarFilmesPorNome(nome);
+
+    catalogo.innerHTML = "";
+    renderizarResultadoBusca(filmes);
   }, 300);
 });
 
 // ============================================================
-// 6. CARREGAR CATÁLOGO INICIAL
+// 8. RENDERIZAR RESULTADO DA BUSCA
 // ============================================================
-// Ao abrir a página, carrega todos os filmes disponíveis.
-(async () => {
-  const filmes = await buscarFilmes();
-  renderizarPorGenero(filmes);
-})();
+function renderizarResultadoBusca(filmes) {
+  const secao = document.createElement("section");
+  secao.classList.add("secao");
+  secao.innerHTML = `<h2>Resultados da busca</h2>`;
+
+  const lista = document.createElement("div");
+  lista.classList.add("lista-filmes");
+
+  filmes.forEach((filme) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    card.innerHTML = `
+      <div class="card-content">
+        <img src="${filme.capa}" alt="${filme.nome_filme}">
+        <div class="overlay">
+          <p>${filme.sinopse}</p>
+          <button class="play-btn" data-video="${filme.url_video}">▶ Assistir</button>
+        </div>
+        <h3>${filme.nome_filme}</h3>
+      </div>
+    `;
+
+    lista.appendChild(card);
+  });
+
+  secao.appendChild(lista);
+  catalogo.appendChild(secao);
+
+  document.querySelectorAll(".play-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const videoUrl = e.target.getAttribute("data-video");
+      abrirPlayer(videoUrl);
+    });
+  });
+}
+
+// ============================================================
+// 9. CARREGAR CATÁLOGO AO ABRIR A PÁGINA
+// ============================================================
+renderizarCatalogo();

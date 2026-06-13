@@ -31,6 +31,11 @@ body {
   overflow-x: auto;
   gap: 1rem;
   padding: 1rem;
+  scroll-behavior: smooth;
+}
+/*Ocutar scroobar hotrizontal*/
+.lista-filmes::-webkit-scrollbar {
+  height: 0;
 }
 
 .card {
